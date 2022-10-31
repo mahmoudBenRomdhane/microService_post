@@ -16,8 +16,5 @@ describe('UsersService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should fetch a user by its id', () => {
-    const user = service.findById(1);
-    expect(user.id).toEqual(1);
-  });
+ 
 });

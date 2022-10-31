@@ -4,8 +4,8 @@ import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
 
 const usersServiceMock = {
-  findById: jest.fn((id: number): User => {
-    return { id, name: 'Mocked User',description:'Moded des' };
+  findById: jest.fn((id: string): User => {
+    return { id, name: 'Mocked User', role: 'afmin' };
   }),
 };
 
@@ -25,15 +25,5 @@ describe('UsersResolver', () => {
 
   it('should be defined', () => {
     expect(resolver).toBeDefined();
-  });
-
-  it('should query a user by its id', () => {
-    const result = resolver.getUser(1);
-    expect(result.id).toEqual(1);
-  });
-
-  it('should resolve a reference', () => {
-    const result = resolver.resolveReference({ __typename: 'User', id: 1 });
-    expect(result.id).toEqual(1);
   });
 });

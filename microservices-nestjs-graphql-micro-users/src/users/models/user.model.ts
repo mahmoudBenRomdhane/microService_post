@@ -1,11 +1,21 @@
-import { Directive, Field, ID, ObjectType } from '@nestjs/graphql';
+import {Field, ObjectType,ID } from '@nestjs/graphql';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+@Entity()
 @ObjectType()
-@Directive('@key(fields: "id")')
 export class User {
-  @Field((type) => ID)
-  id: number;
 
-  @Field()
+  @PrimaryGeneratedColumn('increment')
+  @Field(() => ID, { description: 'id of the user' })
+  id: string;
+
+  @Column()
+  @Field(() => String, { description: 'name of the user' })
   name: string;
+
+  @Column()
+  @Field(() => String, { description: 'role of the user' })
+  role: string;
+
+  
 }
