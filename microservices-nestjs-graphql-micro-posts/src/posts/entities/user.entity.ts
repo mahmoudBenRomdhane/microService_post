@@ -5,10 +5,10 @@ import { Post } from './post.entity';
 @Directive('@extends')
 @Directive('@key(fields: "id")')
 export class User {
-  @Field((type) => ID)
+  @Field(() => ID)
   @Directive('@external')
   id: number;
 
-  @Field((type) => [Post])
+  @Field(() => [Post])
   posts?: Post[];
 }

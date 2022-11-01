@@ -1,18 +1,33 @@
-import { Directive, Field, ID, Int, ObjectType } from '@nestjs/graphql';
-import { User } from './user.entity';
+import { Field, Directive, ID, ObjectType, Int } from '@nestjs/graphql';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
+@Entity('posts')
 @ObjectType()
 @Directive('@key(fields: "id")')
 export class Post {
-  @Field((type) => ID)
+  @PrimaryGeneratedColumn('increment')
+  @Field(() => ID, { description: 'id of the post' })
   id: number;
 
-  @Field()
+  @Column()
+  @Field(() => String, { description: 'title of the post' })
   title: string;
 
-  @Field((type) => Int)
+  @Column()
+  @Field(() => Int, { description: 'authorId of the post' })
   authorId: number;
 
-  @Field((type) => User)
-  user?: User;
+  @Field(() => String, { description: 'create date of the post' })
+  @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  public created_at!: Date;
+
+  @Field(() => String, { description: 'update date of the post' })
+  @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  public updated_at!: Date;
 }

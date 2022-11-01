@@ -4,11 +4,13 @@ import {
   Mutation,
   Resolver,
   ResolveReference,
+  Int,
 } from '@nestjs/graphql';
 import { User } from './models/user.model';
 import { UsersService } from './users.service';
 import { CreateUserInput } from './dto/create-user.input';
 import { RemoveUserOutput } from './dto/remove-user.output';
+import { UpdateUserInput } from './dto/update-user.input';
 @Resolver((of) => User)
 export class UsersResolver {
   constructor(private usersService: UsersService) {}
@@ -19,7 +21,7 @@ export class UsersResolver {
   }
 
   @Query(() => User, { name: 'user' })
-  findOne(@Args('userId', { type: () => String }) userId: string) {
+  findOne(@Args('userId', { type: () => Int }) userId: number) {
     return this.usersService.findOne(userId);
   }
 
@@ -29,12 +31,17 @@ export class UsersResolver {
   }
 
   @Mutation(() => RemoveUserOutput)
-  removeUser(@Args('userId', { type: () => String }) userId: string) {
+  removeUser(@Args('userId', { type: () => Int }) userId: number) {
     return this.usersService.remove(userId);
   }
 
+  @Mutation(() => User)
+  updateUser(@Args('userId', { type: () => Int }) userId: number,@Args('updateUserInput') updateUserInput: UpdateUserInput) {
+    return this.usersService.update(userId,updateUserInput);
+  }
+
   @ResolveReference()
-  resolveReference(reference: { __typename: string; userId: string }) {
-    return this.usersService.findOne(reference.userId);
+  resolveReference(reference: { __typename: string; id: number }) {
+    return this.usersService.findOne(reference.id);
   }
 }

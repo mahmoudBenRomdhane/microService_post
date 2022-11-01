@@ -1,24 +1,63 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Post } from './entities/post.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreatePostInput } from './dto/create-post.input';
+import { UpdatePostInput } from './dto/update-post.input';
 
 @Injectable()
 export class PostsService {
-  private posts: Post[] = [
-    { authorId: 1, id: 1, title: 'Lorem Ipsum' },
-    { authorId: 1, id: 2, title: 'Foo' },
-    { authorId: 2, id: 3, title: 'Bar' },
-    { authorId: 2, id: 4, title: 'Hello World' },
-  ];
+  constructor(
+    @InjectRepository(Post)
+    private readonly postRepository: Repository<Post>,
+  ) {}
 
-  findAllByAuthorId(authorId: number): Post[] {
-    return this.posts.filter((post) => post.authorId === Number(authorId));
+  async findAllByAuthorId(authorId: number): Promise<Array<Post>> {
+    return await this.postRepository.find({
+      where: { authorId: authorId },
+    });
   }
 
-  findOne(postId: number): Post {
-    return this.posts.find((post) => post.id === postId);
+  async create(createPostInput: CreatePostInput): Promise<Post> {
+    const post = this.postRepository.create(createPostInput);
+    return await this.postRepository.save(post);
   }
 
-  findAll(): Post[] {
-    return this.posts;
+  async findOne(productId: number): Promise<Post> {
+    const product = await this.postRepository.findOne({
+      where: { id: productId },
+    });
+    if (!product) {
+      throw new NotFoundException(`User #${productId} not found`);
+    }
+    return product;
+  }
+
+  async findAll(): Promise<Array<Post>> {
+    return await this.postRepository.find();
+  }
+
+  async remove(productId: number): Promise<any> {
+    const product = await this.postRepository.findOne({
+      where: { id: productId },
+    });
+    await this.postRepository.remove(product);
+    return {
+      message: 'product removed successfully',
+    };
+  }
+
+  async update(
+    postId: number,
+    updatePostInput: UpdatePostInput,
+  ): Promise<Post> {
+    const post = await this.postRepository.preload({
+      id: postId,
+      ...updatePostInput,
+    });
+    if (!post) {
+      throw new NotFoundException(`Post #${postId} not found`);
+    }
+    return this.postRepository.save(post);
   }
 }

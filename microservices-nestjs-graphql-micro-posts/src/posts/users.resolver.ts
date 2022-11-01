@@ -8,7 +8,8 @@ export class UsersResolver {
   constructor(private readonly postsService: PostsService) {}
 
   @ResolveField((of) => [Post])
-  public posts(@Parent() user: User): Post[] {
+  public posts(@Parent() user: User) {
+    console.log('ResolveField User>Post posts = ' + user.id);
     return this.postsService.findAllByAuthorId(user.id);
   }
 }
