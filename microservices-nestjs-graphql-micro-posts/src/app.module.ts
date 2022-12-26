@@ -24,7 +24,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     TypeOrmModule.forRoot({
       keepConnectionAlive: true,
       type: 'postgres',
-      host: 'localhost',
+      host: '145.239.168.115',
       port: 5432,
       username: 'postgres',
       password: '1234',
